@@ -1,0 +1,67 @@
+﻿@{
+    ViewBag.Title = "Shop";
+
+}
+
+@model IEnumerable<CJHillPhotography.Models.Image>
+
+
+
+    <div class="text">
+        <br>
+        <br>
+        <h1 style=text-align:center>Shop</h1>
+        <br>
+        <br>
+
+        <div>
+            <br />
+            <br />
+            <div class="container mt-3">
+                <div class="d-flex flex-wrap bg-light">
+                    @foreach (var image in Model)
+                    {
+                        <div class="p-2 border">
+                            <div class="card" style="width: 18rem;">
+                                <img src="@Url.Action("GetImage", "Home", new { id = image.ImageID })" alt="@image.ImageName" />
+                                <div class="card-body">
+                                    <p class="card-text" style="color:white;">£75</p>
+                                    <a href="#" class="btn btn-primary addToCart" data-imageid="@image.ImageID">Add To Cart</a>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+            <br />
+            <br />
+            <br />
+            @Html.ActionLink("Refresh this page", "../test")
+        </div>
+
+        <!-- JavaScript code to handle adding items to the cart -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script>
+        $(document).ready(function () {
+            $(".addToCart").click(function (e) {
+                e.preventDefault();
+                var imageId = $(this).data("imageid");
+                var quantity = 1; // You can change this to allow users to specify quantity
+                $.ajax({
+                    url: "@Url.Action("AddToCart", "Home")",
+                    type: "POST",
+                    data: { imageId: imageId, quantity: quantity },
+                    success: function (response) {
+                        // Handle the response
+                        alert("Item added to cart!");
+                    },
+                    error: function () {
+                        // Handle errors
+                        alert("Error adding item to cart!");
+                    }
+                });
+            });
+        });
+        </script>
+</body>
+</html>

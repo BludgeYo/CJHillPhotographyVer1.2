@@ -1,0 +1,79 @@
+﻿@model List<CJHillPhotography.Models.CartItem>
+
+<style>
+    .cart-table {
+        width: 60%;
+        margin: 0 auto;
+    }
+
+        .cart-table th,
+        .cart-table td {
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .cart-table thead tr:nth-child(odd),
+        .cart-table tbody tr:nth-child(odd) {
+            background-color: #a9a9a9;
+        }
+
+        .cart-table thead tr:nth-child(even),
+        .cart-table tbody tr:nth-child(even) {
+            background-color: #d3d3d3;
+        }
+</style>
+
+<div class="text">
+    <br>
+    <br>
+    <h1 style=text-align:center>Shopping Cart</h1>
+    <br>
+    <br>
+
+    @if (Model == null || !Model.Any())
+    {
+        <p>Your cart is empty.</p>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-bordered cart-table">
+                <thead>
+                    <tr>
+                        <th>Image</th>
+                        <th>Item Details</th>
+                        <th>Quantity</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                <img src="@Url.Action("GetImage", "Home", new { id = item.ImageId })" alt="Thumbnail" style="max-width: 100px; max-height: 100px;" />
+                            </td>
+                            <td>
+                                <strong>Item Name:</strong> @item.ImageId <br />
+                                <strong>Item Quantity:</strong> @item.Quantity
+                            </td>
+                            <td>
+                                <!-- Input field for quantity adjustment -->
+                                <form method="post" action="@Url.Action("UpdateQuantity", "Home")">
+                                    <input type="hidden" name="itemId" value="@item.CartItemId" />
+                                    <input type="number" name="quantity" value="@item.Quantity" min="1" max="100" /> <!-- Adjust min and max values as needed -->
+                                    <button type="submit" class="btn btn-primary">Update</button>
+                                </form>
+                            </td>
+                            <td>
+                                <form method="post" action="@Url.Action("DeleteFromCart", "Home")">
+                                    <input type="hidden" name="itemId" value="@item.CartItemId" />
+                                    <button type="submit" class="btn btn-danger">Delete</button>
+                                </form>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }

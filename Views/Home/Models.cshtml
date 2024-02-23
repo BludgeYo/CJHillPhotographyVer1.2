@@ -1,0 +1,135 @@
+﻿@{
+    ViewBag.Title = "Models";
+}
+
+@model IEnumerable<CJHillPhotography.Models.Image>
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Colaborative Photography</title>
+    <style>
+        /* Add some basic styling to the thumbnail grid */
+        .thumbnail-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            width: 60%;
+            margin: auto;
+        }
+
+        /* Style for the thumbnails */
+        .thumbnail {
+            width: 200px;
+            height: 300px;
+            object-fit: cover;
+            cursor: pointer;
+        }
+
+        /* Styling for the image overlay */
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            justify-content: center;
+            align-items: center;
+            backdrop-filter: blur(8px);
+        }
+
+            .overlay img {
+                max-width: 90%;
+                max-height: 90%;
+                object-fit: contain;
+            }
+
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            color: white;
+            cursor: pointer;
+            font-size: 24px;
+        }
+
+        .nav-btn {
+            color: white;
+            font-size: 36px;
+            cursor: pointer;
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        .prev-btn {
+            left: 10px;
+        }
+
+        .next-btn {
+            right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="text">
+        <br>
+        <br>
+        <h1 style=text-align:center>Colaborative Photograpy</h1>
+        <br>
+        <br>
+    </div>
+    <div class="thumbnail-grid">
+        @foreach (var image in Model.Where(img => img.ImageName.StartsWith("IMG")))
+        {
+            <img class="thumbnail" src="@Url.Action("GetImage", "Home", new { id = image.ImageID })" alt="@image.ImageName" data-index="@(Model.ToList().FindIndex(x => x.ImageID == image.ImageID))" onclick="showOverlay(this)" />
+        }
+    </div>
+
+
+    <div class="overlay" id="overlay">
+        <span class="close-btn" onclick="closeOverlay()">×</span>
+        <img id="overlayImage" />
+        <span class="nav-btn prev-btn" onclick="navigateImage(-1)">&#10094;</span>
+        <span class="nav-btn next-btn" onclick="navigateImage(1)">&#10095;</span>
+    </div>
+
+    <script>
+        let currentImageIndex = 0;
+        let images = [];
+
+        function initializeImages() {
+            images = Array.from(document.querySelectorAll('.thumbnail')).map(thumbnail => thumbnail.src);
+        }
+
+        function showOverlay(element) {
+            initializeImages();
+            currentImageIndex = parseInt(element.getAttribute('data-index'));
+
+            document.getElementById("overlayImage").src = element.src;
+            document.getElementById("overlay").style.display = "flex";
+        }
+
+        function closeOverlay() {
+            document.getElementById("overlay").style.display = "none";
+        }
+
+        function navigateImage(direction) {
+            if (images.length > 0) {
+                currentImageIndex = (currentImageIndex + direction + images.length) % images.length;
+                document.getElementById("overlayImage").src = images[currentImageIndex];
+            }
+        }
+    </script>
+
+
+
+
+
+
+
+</body>
+</html>
